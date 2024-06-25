@@ -19,6 +19,28 @@ export const createUser = createAsyncThunk("createUser", async (data, {rejectWit
     }
 })
 
+//updateUser action
+export const updateUser = createAsyncThunk("updateUser", async (data, {rejectWithValue})=>{
+    const response = await fetch(`https://66634d7b62966e20ef0c3a8b.mockapi.io/crud/${data.id}`, 
+    {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+
+    try {
+        const result = response.json();
+        return result;
+    } catch (error) {
+        return rejectWithValue(error)
+    }
+})
+
+
+
+
 //Read action
 export const showUser = createAsyncThunk("showUser", async (args, {rejectWithValue})=>{
     const response = await fetch("https://66634d7b62966e20ef0c3a8b.mockapi.io/crud");
@@ -58,6 +80,14 @@ export const userDetail = createSlice({
         users: [],
         loading: false,
         error: null,
+        searchData: []
+    },
+     
+    reducers:{
+        searchUser: (state, action) =>{
+            console.log(action.payload);
+            state.searchData = action.payload;  
+        },
     },
         extraReducers: (builder) => {
             builder
@@ -98,7 +128,19 @@ export const userDetail = createSlice({
                 state.loading = false;
                 state.users = action.payload;
             })
-
+            .addCase(updateUser.pending, (state)=>{
+                state.loading = true;
+            })
+            .addCase(updateUser.fulfilled, (state, action)=>{
+                state.loading = false;
+                state.users = state.users.map((ele)=> (
+                    ele.id === action.payload.id ? action.payload : ele
+                ))
+            })
+            .addCase(updateUser.rejected, (state, action)=>{
+                state.loading = false;
+                state.users = action.payload;
+            })
             
         },
 
@@ -108,3 +150,5 @@ export const userDetail = createSlice({
 });
 
 export default userDetail.reducer;
+
+export const {searchUser} = userDetail.actions;

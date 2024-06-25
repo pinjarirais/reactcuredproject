@@ -1,10 +1,16 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { searchUser } from '../features/userdetailSlice'
 
 const Navbar = () => {
-
+  const [searchData, setSearchData] = useState("")
+  const dispatch = useDispatch();
   const allUsers = useSelector((state) => state.app.users)
+
+  useEffect(()=>{
+    dispatch(searchUser(searchData))
+  })
 
   return (
     <div>
@@ -30,6 +36,8 @@ const Navbar = () => {
               type="search"
               placeholder="Search"
               aria-label="Search"
+              value={searchData}
+              onChange={(e)=>{setSearchData(e.target.value)}}
             />
           </div>
         </div>
