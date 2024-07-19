@@ -30,6 +30,9 @@ const Navbar = () => {
                   All Post ({allUsers.length})
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link to="/todo" className="nav-link">TODO</Link>
+              </li>
             </ul>
             <input
               className="form-control me-2 w-50"
